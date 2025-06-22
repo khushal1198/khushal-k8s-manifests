@@ -31,19 +31,13 @@ spec:
             memory: "256Mi"
             cpu: "200m"
         livenessProbe:
-          exec:
-            command:
-            - python
-            - -c
-            - "import grpc; grpc.insecure_channel('localhost:50051').connect()"
+          grpc:
+            port: 50051
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
-          exec:
-            command:
-            - python
-            - -c
-            - "import grpc; grpc.insecure_channel('localhost:50051').connect()"
+          grpc:
+            port: 50051
           initialDelaySeconds: 5
           periodSeconds: 5
 ---

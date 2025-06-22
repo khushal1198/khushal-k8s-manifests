@@ -3,7 +3,6 @@ kind: Ingress
 metadata:
   name: hello-grpc-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
@@ -17,7 +16,7 @@ spec:
             name: hello-ui-service
             port:
               number: 80
-      - path: /api
+      - path: /static
         pathType: Prefix
         backend:
           service:

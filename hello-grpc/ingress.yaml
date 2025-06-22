@@ -8,7 +8,7 @@ metadata:
     # Specify which Ingress controller to use
     kubernetes.io/ingress.class: "traefik" 
     # Apply the redirect middleware
-    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-to-static@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: redirect-to-static
 spec:
   rules:
   - host: ui.shivi.local

@@ -21,6 +21,13 @@ spec:
             name: hello-ui-service
             port:
               number: 80
+      - path: /static
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-ui-service
+            port:
+              number: 80
 ---
 # Middleware to handle the root path redirect
 apiVersion: traefik.io/v1alpha1

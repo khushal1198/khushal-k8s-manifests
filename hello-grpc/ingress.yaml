@@ -1,12 +1,17 @@
+# Ingress for the UI service
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hello-grpc-ingress
+  namespace: default # Explicitly in the default namespace
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Specify which Ingress controller to use
+    kubernetes.io/ingress.class: "traefik" 
+    # Apply the redirect middleware
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-to-static@kubernetescrd
 spec:
   rules:
-  - host: shivi.local
+  - host: ui.shivi.local
     http:
       paths:
       - path: /
@@ -16,10 +21,15 @@ spec:
             name: hello-ui-service
             port:
               number: 80
-      - path: /static
-        pathType: Prefix
-        backend:
-          service:
-            name: hello-ui-service
-            port:
-              number: 80 
+---
+# Middleware to handle the root path redirect
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-static
+  namespace: default # Ensure this is in the same namespace
+spec:
+  redirectRegex:
+    permanent: false
+    regex: "^/$"
+    replacement: "/static/index.html" 

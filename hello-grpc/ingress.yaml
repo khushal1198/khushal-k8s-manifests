@@ -6,9 +6,9 @@ metadata:
   namespace: default # Explicitly in the default namespace
   annotations:
     # Specify which Ingress controller to use
-    kubernetes.io/ingress.class: "traefik" 
-    # Apply the redirect middleware
-    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-to-static@kubernetes
+    kubernetes.io/ingress.class: "traefik"
+    # Use middleware for redirect
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-to-static@kubernetescrd
 spec:
   rules:
   - host: ui.shivi.local
@@ -27,16 +27,4 @@ spec:
           service:
             name: hello-ui-service
             port:
-              number: 80
----
-# Middleware to handle the root path redirect
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: redirect-to-static
-  namespace: default # Ensure this is in the same namespace
-spec:
-  redirectRegex:
-    permanent: false
-    regex: "^/$"
-    replacement: "/static/index.html" 
+              number: 80 

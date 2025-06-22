@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: default-redirect-to-static
+  namespace: default
+spec:
+  redirectRegex:
+    permanent: false
+    regex: "^/$"
+    replacement: "/static/index.html" 

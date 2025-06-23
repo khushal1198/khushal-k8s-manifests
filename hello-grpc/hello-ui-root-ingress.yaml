@@ -11,7 +11,7 @@ spec:
     - host: shivi.local
       http:
         paths:
-          - path: /
+          - path: /ui
             pathType: Prefix
             backend:
               service:
@@ -21,7 +21,7 @@ spec:
     - host: ui.shivi.local
       http:
         paths:
-          - path: /
+          - path: /ui
             pathType: Prefix
             backend:
               service:

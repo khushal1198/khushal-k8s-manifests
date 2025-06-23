@@ -1,12 +1,15 @@
 # khushal-k8s-manifests
 
-This repository contains Kubernetes manifests for the hello-grpc service deployed to the cluster.
+This repository contains Kubernetes manifests for the hello-grpc service and UI deployed to the cluster.
 
 ## Structure
 
 ```
 hello-grpc/
-  deployment.yaml  # Contains Deployment and Service for hello-grpc
+  deployment.yaml                    # Contains Deployment and Service for hello-grpc
+  hello-ui-deployment.yaml          # UI deployment and service
+  hello-ui-root-ingress.yaml        # Ingress for UI at /ui endpoint
+  hello-ui-api-ingress.yaml         # Ingress for API at /api endpoint
 ```
 
 ## GitOps Workflow
@@ -15,13 +18,43 @@ hello-grpc/
 - The hello-grpc CI/CD pipeline updates the image tag in `hello-grpc/deployment.yaml` when a new Docker image is built.
 - ArgoCD watches this repository and automatically syncs changes to the cluster.
 
-## hello-grpc Service
+## Services
 
+### hello-grpc Service
 The hello-grpc service is a Python gRPC server that:
 - Runs on port 50051
 - Implements gRPC health checks
 - Is deployed with 3 replicas
 - Uses LoadBalancer service type for external access
+
+### hello-ui Service
+The hello-ui service is a web UI that:
+- Serves a React-based frontend at `/ui`
+- Provides a REST API at `/api/hello` that internally calls the gRPC service
+- Runs on port 80
+- Is deployed with 1 replica
+- Uses ClusterIP service type
+
+## Access Points
+
+- **UI**: `http://shivi.local:30080/ui/` - Web interface for the gRPC client
+- **API**: `http://shivi.local:30080/api/hello` - REST API endpoint (POST with JSON body)
+- **ArgoCD**: `http://shivi.local:30080/argocd/` - GitOps management interface
+
+## API Usage
+
+The `/api/hello` endpoint expects a POST request with JSON body:
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"name": "Your Name"}' \
+  http://shivi.local:30080/api/hello
+```
+
+Response:
+```json
+{"message": "Hello, Your Name!"}
+```
 
 ## ArgoCD Application
 

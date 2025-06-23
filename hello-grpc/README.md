@@ -1,6 +1,13 @@
 # Hello gRPC Kubernetes Deployment
 
-This directory contains Kubernetes manifests for deploying the Hello gRPC application.
+This directory contains Kubernetes manifests for deploying the Hello gRPC application with a clean, minimal setup.
+
+## Architecture
+
+This deployment uses a **Backend for Frontend (BFF)** pattern:
+- **gRPC Server**: Handles the core business logic
+- **UI Server**: Acts as a BFF, serving the web UI and proxying API calls to the gRPC server
+- **NGINX Ingress**: Routes external traffic to the UI server
 
 ## Services
 
@@ -9,17 +16,40 @@ This directory contains Kubernetes manifests for deploying the Hello gRPC applic
 - **Service**: `hello-grpc-service` (ClusterIP)
 - **Port**: 50051
 - **Replicas**: 2
+- **Purpose**: Core gRPC service handling HelloService.SayHello requests
 
-### 2. UI Server
+### 2. UI Server (BFF)
 - **Deployment**: `ui-deployment.yaml`
 - **Service**: `hello-ui-service` (ClusterIP)
 - **Port**: 8081 (internal) / 80 (service)
 - **Replicas**: 2
+- **Purpose**: Serves static files and provides REST API endpoints that proxy to gRPC
 
-### 3. Ingress
-- **Ingress**: `ingress.yaml`
-- **Purpose**: External access to UI
-- **Host**: `hello-grpc.your-domain.com` (update this)
+## Ingress Configuration
+
+### NGINX Ingress Setup
+
+We use **two separate ingress resources** to handle different path behaviors:
+
+#### 1. Root Ingress (`hello-ui-root-ingress.yaml`)
+- **Purpose**: Serves the main UI at the root path
+- **Hosts**: `shivi.local`, `ui.shivi.local`
+- **Path**: `/`
+- **Behavior**: Rewrites `/` to `/static/index.html` for SPA routing
+- **Backend**: `hello-ui-service:80`
+
+#### 2. API Ingress (`hello-ui-api-ingress.yaml`)
+- **Purpose**: Handles API calls
+- **Hosts**: `shivi.local`, `ui.shivi.local`
+- **Path**: `/api/*`
+- **Behavior**: Passes through to UI server's API endpoints
+- **Backend**: `hello-ui-service:80`
+
+### Why Two Ingress Resources?
+
+Kubernetes Ingress doesn't support per-path annotations, so we need separate resources for:
+- **Root path** (`/`) with rewrite to serve the SPA
+- **API paths** (`/api/*`) without rewrite for REST endpoints
 
 ## Deployment
 
@@ -28,11 +58,12 @@ This directory contains Kubernetes manifests for deploying the Hello gRPC applic
 kubectl apply -f .
 ```
 
-### Apply individual services:
+### Apply individual components:
 ```bash
 kubectl apply -f grpc-deployment.yaml
 kubectl apply -f ui-deployment.yaml
-kubectl apply -f ingress.yaml
+kubectl apply -f hello-ui-root-ingress.yaml
+kubectl apply -f hello-ui-api-ingress.yaml
 ```
 
 ## Configuration
@@ -50,16 +81,34 @@ kubectl apply -f ingress.yaml
 
 ## Access Points
 
-- **Internal gRPC**: `hello-grpc-service:50051`
-- **Internal UI**: `hello-ui-service:80`
-- **External UI**: `http://hello-grpc.your-domain.com`
+### External Access
+- **UI**: `http://shivi.local:30080/`
+- **API**: `http://shivi.local:30080/api/hello` (POST with JSON body)
+- **Static Assets**: `http://shivi.local:30080/static/*`
 
-## CI/CD Integration
+### Internal Access
+- **gRPC Server**: `hello-grpc-service:50051`
+- **UI Server**: `hello-ui-service:80`
 
-The GitHub Actions workflow automatically updates the image tags in these manifests when new Docker images are built and pushed.
+## API Endpoints
+
+### POST `/api/hello`
+- **Content-Type**: `application/json`
+- **Request Body**: `{"name": "Your Name"}`
+- **Response**: `{"message": "Hello, Your Name!"}`
+
+### GET `/api/health`
+- **Response**: Health status of the UI server and gRPC connection
+
+## Prerequisites
+
+1. **NGINX Ingress Controller** installed in the cluster
+2. **NodePort 30080** configured for external access
+3. **DNS/mDNS** resolution for `shivi.local`
 
 ## Notes
 
-1. Update the hostname in `ingress.yaml` to match your domain
-2. Ensure your cluster has an Ingress controller installed
-3. The UI server connects to the gRPC server using the Kubernetes service name 
+1. The UI server acts as a BFF, handling both static file serving and API proxying
+2. No direct gRPC-web proxy needed - the UI server handles gRPC communication internally
+3. The setup is optimized for a clean, minimal configuration with only essential resources
+4. ArgoCD manages the deployment and will sync changes from the Git repository 

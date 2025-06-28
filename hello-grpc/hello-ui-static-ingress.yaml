@@ -1,17 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-ui-root-ingress
+  name: hello-ui-static-ingress
   namespace: default
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /static/index.html
 spec:
   ingressClassName: nginx
   rules:
     - host: shivi.local
       http:
         paths:
-          - path: /ui
+          - path: /static
             pathType: Prefix
             backend:
               service:
@@ -21,7 +19,7 @@ spec:
     - host: ui.shivi.local
       http:
         paths:
-          - path: /ui
+          - path: /static
             pathType: Prefix
             backend:
               service:

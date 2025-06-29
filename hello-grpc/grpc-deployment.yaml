@@ -23,6 +23,8 @@ spec:
         env:
         - name: PYTHONPATH
           value: "/app"
+        - name: APP_ENV
+          value: "PROD"
         resources:
           requests:
             memory: "128Mi"

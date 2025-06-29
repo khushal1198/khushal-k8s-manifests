@@ -23,6 +23,8 @@ spec:
         env:
         - name: PYTHONPATH
           value: "/app"
+        - name: APP_ENV
+          value: "PROD"
         - name: GRPC_SERVER_HOST
           value: "hello-grpc-service"
         - name: GRPC_SERVER_PORT

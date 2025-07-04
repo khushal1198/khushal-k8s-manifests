@@ -18,7 +18,7 @@ spec:
       - name: grpc-user
         image: ghcr.io/khushal1198/hello_grpc-user:master-97e96b5
         ports:
-        - containerPort: 50051
+        - containerPort: 50052
           name: grpc
         env:
         - name: PYTHONPATH
@@ -34,12 +34,12 @@ spec:
             cpu: "200m"
         livenessProbe:
           grpc:
-            port: 50051
+            port: 50052
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           grpc:
-            port: 50051
+            port: 50052
           initialDelaySeconds: 5
           periodSeconds: 5
 ---
@@ -53,7 +53,7 @@ spec:
   selector:
     app: hello-grpc-user
   ports:
-  - port: 50051
-    targetPort: 50051
+  - port: 50052
+    targetPort: 50052
     name: grpc
   type: ClusterIP 

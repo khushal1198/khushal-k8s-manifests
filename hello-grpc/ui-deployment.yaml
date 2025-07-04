@@ -29,6 +29,10 @@ spec:
           value: "hello-grpc-service"
         - name: GRPC_SERVER_PORT
           value: "50051"
+        - name: USER_SERVICE_HOST
+          value: "hello-grpc-user-service"
+        - name: USER_SERVICE_PORT
+          value: "50052"
         - name: UI_SERVER_PORT
           value: "8081"
         resources:
@@ -64,4 +68,4 @@ spec:
   - port: 80
     targetPort: 8081
     name: http
-  type: ClusterIP 
+  type: ClusterIP

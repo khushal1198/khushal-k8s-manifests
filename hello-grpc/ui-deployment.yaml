@@ -34,6 +34,10 @@ spec:
           value: "hello-grpc-user-service"
         - name: USER_SERVICE_PORT
           value: "50052"
+        - name: EXPENSE_SERVICE_HOST
+          value: "hello-grpc-expense-service"
+        - name: EXPENSE_SERVICE_PORT
+          value: "50053"
         - name: UI_SERVER_PORT
           value: "8081"
         resources:

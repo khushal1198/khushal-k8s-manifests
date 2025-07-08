@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ui-server
-        image: ghcr.io/khushal1198/hello_grpc-ui:master-2babf8b
+        image: ghcr.io/khushal1198/hello_grpc-ui:master-c51b3ee
         ports:
         - containerPort: 8081
           name: http

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: grpc-server
-        image: ghcr.io/khushal1198/hello_grpc-grpc:master-b44efec
+        image: ghcr.io/khushal1198/hello_grpc-grpc:master-577d6ae
         ports:
         - containerPort: 50051
           name: grpc

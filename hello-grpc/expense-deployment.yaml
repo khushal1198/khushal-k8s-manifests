@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: grpc-expense
-        image: ghcr.io/khushal1198/hello_grpc-expense:master-7af3be3
+        image: ghcr.io/khushal1198/hello_grpc-expense:master-fa3f646
         ports:
         - containerPort: 50053
           name: grpc

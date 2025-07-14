@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ui-server
-        image: ghcr.io/khushal1198/tracc-ui:master-73e4da9
+        image: ghcr.io/khushal1198/tracc-ui:master-5e761f0
         ports:
         - containerPort: 8081
           name: http

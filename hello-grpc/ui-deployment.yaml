@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-ui-server
+  name: tracc-ui-server
   labels:
-    app: hello-ui-server
+    app: tracc-ui-server
 spec:
   replicas: 2
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: hello-ui-server
+      app: tracc-ui-server
   template:
     metadata:
       labels:
-        app: hello-ui-server
+        app: tracc-ui-server
     spec:
       containers:
       - name: ui-server
@@ -26,16 +26,12 @@ spec:
           value: "/app"
         - name: APP_ENV
           value: "PROD"
-        - name: GRPC_SERVER_HOST
-          value: "hello-grpc-service"
-        - name: GRPC_SERVER_PORT
-          value: "50051"
         - name: USER_SERVICE_HOST
-          value: "hello-grpc-user-service"
+          value: "tracc-user-service"
         - name: USER_SERVICE_PORT
           value: "50052"
         - name: EXPENSE_SERVICE_HOST
-          value: "hello-grpc-expense-service"
+          value: "tracc-expense-service"
         - name: EXPENSE_SERVICE_PORT
           value: "50053"
         - name: UI_SERVER_PORT
@@ -63,12 +59,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-ui-service
+  name: tracc-ui-service
   labels:
-    app: hello-ui-server
+    app: tracc-ui-server
 spec:
   selector:
-    app: hello-ui-server
+    app: tracc-ui-server
   ports:
   - port: 80
     targetPort: 8081

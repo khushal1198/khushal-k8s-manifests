@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-ui-root-ingress
+  name: tracc-ui-root-ingress
   namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /static/index.html
@@ -15,7 +15,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: hello-ui-service
+                name: tracc-ui-service
                 port:
                   number: 80
     - host: ui.shivi.local
@@ -25,6 +25,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: hello-ui-service
+                name: tracc-ui-service
                 port:
                   number: 80 

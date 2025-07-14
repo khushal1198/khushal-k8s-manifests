@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-grpc-user
+  name: tracc-user
   labels:
-    app: hello-grpc-user
+    app: tracc-user
 spec:
   replicas: 2
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: hello-grpc-user
+      app: tracc-user
   template:
     metadata:
       labels:
-        app: hello-grpc-user
+        app: tracc-user
     spec:
       containers:
       - name: grpc-user
@@ -47,12 +47,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-grpc-user-service
+  name: tracc-user-service
   labels:
-    app: hello-grpc-user
+    app: tracc-user
 spec:
   selector:
-    app: hello-grpc-user
+    app: tracc-user
   ports:
   - port: 50052
     targetPort: 50052

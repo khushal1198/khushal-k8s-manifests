@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-grpc-expense
+  name: tracc-expense
   labels:
-    app: hello-grpc-expense
+    app: tracc-expense
 spec:
   replicas: 2
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: hello-grpc-expense
+      app: tracc-expense
   template:
     metadata:
       labels:
-        app: hello-grpc-expense
+        app: tracc-expense
     spec:
       containers:
       - name: grpc-expense
@@ -47,12 +47,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-grpc-expense-service
+  name: tracc-expense-service
   labels:
-    app: hello-grpc-expense
+    app: tracc-expense
 spec:
   selector:
-    app: hello-grpc-expense
+    app: tracc-expense
   ports:
   - port: 50053
     targetPort: 50053

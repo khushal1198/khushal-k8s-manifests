@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-ui-api-ingress
+  name: tracc-ui-api-ingress
   namespace: default
 spec:
   ingressClassName: nginx
@@ -13,7 +13,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: hello-ui-service
+                name: tracc-ui-service
                 port:
                   number: 80
     - host: ui.shivi.local
@@ -23,6 +23,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: hello-ui-service
+                name: tracc-ui-service
                 port:
                   number: 80 

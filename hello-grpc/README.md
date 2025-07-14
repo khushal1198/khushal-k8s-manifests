@@ -25,6 +25,33 @@ This deployment uses a **Backend for Frontend (BFF)** pattern:
 - **Replicas**: 2
 - **Purpose**: Serves static files and provides REST API endpoints that proxy to gRPC
 
+## Docker Registry Secret Setup
+
+The `tracc-*` deployments use private images from GitHub Container Registry. You need to create a Docker registry secret for image pull access:
+
+### Create the Secret
+
+Run this command on your cluster to create the `ghcr-secret`:
+
+```bash
+kubectl create secret docker-registry ghcr-secret \
+  --docker-server=ghcr.io \
+  --docker-username=khushal1198 \
+  --docker-password=YOUR_GITHUB_PAT_TOKEN \
+  --docker-email=khushal1198@users.noreply.github.com \
+  --namespace=default
+```
+
+**Replace `YOUR_GITHUB_PAT_TOKEN`** with your actual GitHub Personal Access Token that has `read:packages` permission.
+
+### Verify the Secret
+
+```bash
+kubectl get secret ghcr-secret -n default
+```
+
+This secret is referenced in all `tracc-*` deployments via `imagePullSecrets` and allows the pods to pull private images from `ghcr.io/khushal1198/tracc-*`.
+
 ## Ingress Configuration
 
 ### NGINX Ingress Setup

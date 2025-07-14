@@ -15,9 +15,11 @@ spec:
       labels:
         app: tracc-ui-server
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
       - name: ui-server
-        image: ghcr.io/khushal1198/tracc-ui:master-2b05ab9
+        image: ghcr.io/khushal1198/tracc-ui:master-e4d9951
         ports:
         - containerPort: 8081
           name: http

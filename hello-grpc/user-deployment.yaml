@@ -15,6 +15,8 @@ spec:
       labels:
         app: tracc-user
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
       - name: grpc-user
         image: ghcr.io/khushal1198/tracc-user:master-2b05ab9

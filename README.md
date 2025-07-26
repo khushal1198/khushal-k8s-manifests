@@ -1,13 +1,14 @@
 # khushal-k8s-manifests
 
-This repository contains Kubernetes manifests for the hello-grpc service and UI deployed to the cluster.
+This repository contains Kubernetes manifests for the tracc service and UI deployed to the cluster.
 
 ## Structure
 
 ```
-hello-grpc/
-  deployment.yaml                    # Contains Deployment and Service for hello-grpc
-  hello-ui-deployment.yaml          # UI deployment and service
+tracc/
+  expense-deployment.yaml            # Expense service deployment and service
+  user-deployment.yaml              # User service deployment and service  
+  ui-deployment.yaml                # UI deployment and service
   hello-ui-root-ingress.yaml        # Ingress for UI at /ui endpoint
   hello-ui-api-ingress.yaml         # Ingress for API at /api endpoint
   hello-ui-static-ingress.yaml      # Ingress for static files at /static endpoint
@@ -16,13 +17,13 @@ hello-grpc/
 ## GitOps Workflow
 
 - This repository is used with ArgoCD for GitOps deployment.
-- The hello-grpc CI/CD pipeline updates the image tag in `hello-grpc/deployment.yaml` when a new Docker image is built.
+- The tracc CI/CD pipeline updates the image tags in deployment files when new Docker images are built.
 - ArgoCD watches this repository and automatically syncs changes to the cluster.
 
 ## Services
 
-### hello-grpc Service
-The hello-grpc service is a Python gRPC server that:
+### tracc Services
+The tracc application consists of multiple microservices:
 - Runs on port 50051
 - Implements gRPC health checks
 - Is deployed with 3 replicas
@@ -211,20 +212,20 @@ All ingresses use:
 
 ## ArgoCD Application
 
-To deploy the hello-grpc service, create an ArgoCD Application that points to this repository:
+To deploy the tracc service, create an ArgoCD Application that points to this repository:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: hello-grpc
+  name: tracc
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: 'https://github.com/khushalpujara/khushal-k8s-manifests'
     targetRevision: HEAD
-    path: hello-grpc
+    path: tracc
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
@@ -236,12 +237,12 @@ spec:
 
 ## CI/CD Integration
 
-The hello-grpc application repository automatically updates the image tag in this repository when new code is pushed. The workflow:
+The tracc application repository automatically updates the image tags in this repository when new code is pushed. The workflow:
 
-1. Builds and pushes a new Docker image with a commit-specific tag
-2. Updates the image tag in `hello-grpc/deployment.yaml`
-3. Commits and pushes the change to this repository
-4. ArgoCD detects the change and deploys the new image
+1. Builds and pushes new Docker images with commit-specific tags
+2. Updates the image tags in deployment files
+3. Commits and pushes the changes to this repository
+4. ArgoCD detects the changes and deploys the new images
 
 ## Network Access
 

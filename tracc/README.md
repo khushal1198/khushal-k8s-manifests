@@ -1,6 +1,6 @@
-# Hello gRPC Kubernetes Deployment
+# Tracc Kubernetes Deployment
 
-This directory contains Kubernetes manifests for deploying the Hello gRPC application with a clean, minimal setup.
+This directory contains Kubernetes manifests for deploying the Tracc application with a clean, minimal setup.
 
 ## Architecture
 
@@ -11,19 +11,26 @@ This deployment uses a **Backend for Frontend (BFF)** pattern:
 
 ## Services
 
-### 1. gRPC Server
-- **Deployment**: `grpc-deployment.yaml`
-- **Service**: `hello-grpc-service` (ClusterIP)
-- **Port**: 50051
+### 1. User Service
+- **Deployment**: `user-deployment.yaml`
+- **Service**: `tracc-user-service` (ClusterIP)
+- **Port**: 50052
 - **Replicas**: 2
-- **Purpose**: Core gRPC service handling HelloService.SayHello requests
+- **Purpose**: User management service
 
-### 2. UI Server (BFF)
+### 2. Expense Service
+- **Deployment**: `expense-deployment.yaml`
+- **Service**: `tracc-expense-service` (ClusterIP)
+- **Port**: 50053
+- **Replicas**: 2
+- **Purpose**: Expense management service
+
+### 3. UI Server (BFF)
 - **Deployment**: `ui-deployment.yaml`
-- **Service**: `hello-ui-service` (ClusterIP)
+- **Service**: `tracc-ui-service` (ClusterIP)
 - **Port**: 8081 (internal) / 80 (service)
 - **Replicas**: 2
-- **Purpose**: Serves static files and provides REST API endpoints that proxy to gRPC
+- **Purpose**: Serves static files and provides REST API endpoints that proxy to microservices
 
 ## Docker Registry Secret Setup
 
@@ -96,10 +103,13 @@ kubectl apply -f hello-ui-api-ingress.yaml
 ## Configuration
 
 ### Environment Variables
-- **gRPC Server**: Uses default configuration
+- **User Service**: Uses default configuration
+- **Expense Service**: Uses default configuration 
 - **UI Server**: 
-  - `GRPC_SERVER_HOST`: `hello-grpc-service`
-  - `GRPC_SERVER_PORT`: `50051`
+  - `USER_SERVICE_HOST`: `tracc-user-service`
+  - `USER_SERVICE_PORT`: `50052`
+  - `EXPENSE_SERVICE_HOST`: `tracc-expense-service`
+  - `EXPENSE_SERVICE_PORT`: `50053`
   - `UI_SERVER_PORT`: `8081`
 
 ### Health Checks
@@ -114,8 +124,9 @@ kubectl apply -f hello-ui-api-ingress.yaml
 - **Static Assets**: `http://shivi.local:30080/static/*`
 
 ### Internal Access
-- **gRPC Server**: `hello-grpc-service:50051`
-- **UI Server**: `hello-ui-service:80`
+- **User Service**: `tracc-user-service:50052`
+- **Expense Service**: `tracc-expense-service:50053`
+- **UI Server**: `tracc-ui-service:80`
 
 ## API Endpoints
 

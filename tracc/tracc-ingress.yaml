@@ -1,0 +1,80 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tracc-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    # Note: configuration-snippet disabled in this cluster for security
+    # SPA routing will be handled by the application
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: shivi.local
+      http:
+        paths:
+          # API endpoints (highest priority)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          # OAuth endpoints
+          - path: /oauth
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          # Static assets (JS, CSS, images)
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          # Root and all other paths (SPA catch-all)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+    - host: ui.shivi.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          - path: /oauth
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80

@@ -19,7 +19,7 @@ spec:
       - name: ghcr-secret
       containers:
       - name: ui-server
-        image: ghcr.io/khushal1198/tracc-ui:master-e5b67d5
+        image: ghcr.io/khushal1198/tracc-ui:master-df0a198
         ports:
         - containerPort: 8081
           name: http

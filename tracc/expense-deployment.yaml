@@ -19,7 +19,7 @@ spec:
       - name: ghcr-secret
       containers:
       - name: grpc-expense
-        image: ghcr.io/khushal1198/tracc-expense:master-50bd997
+        image: ghcr.io/khushal1198/tracc-expense:master-8808442
         ports:
         - containerPort: 50053
           name: grpc

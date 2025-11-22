@@ -2,32 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tracc-ingress
-  namespace: tracc
+  namespace: default
   annotations:
-    # AWS ALB Annotations
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
-    # ACM Certificate for tracc.ai
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/e4bfedba-0097-429e-ac36-ee9e36924efa
-    # Health check configuration
-    alb.ingress.kubernetes.io/healthcheck-path: /api/health
-    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '30'
-    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
-    alb.ingress.kubernetes.io/success-codes: '200'
-    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
-    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
-    # Enable CORS for the API
-    alb.ingress.kubernetes.io/cors-enabled: 'true'
-    alb.ingress.kubernetes.io/cors-allow-origin: '*'
-    alb.ingress.kubernetes.io/cors-allow-headers: 'Content-Type, Authorization'
-    alb.ingress.kubernetes.io/cors-allow-methods: 'GET, POST, PUT, DELETE, OPTIONS'
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    # Note: configuration-snippet disabled in this cluster for security
+    # SPA routing will be handled by the application
 spec:
+  ingressClassName: nginx
   rules:
-    # tracc.ai domain
-    - host: tracc.ai
+    - host: shivi.local
       http:
         paths:
           # API endpoints (highest priority)
@@ -62,10 +47,30 @@ spec:
                 name: tracc-ui-service
                 port:
                   number: 80
-    # www redirect
-    - host: www.tracc.ai
+    - host: ui.shivi.local
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          - path: /oauth
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: tracc-ui-service
+                port:
+                  number: 80
           - path: /
             pathType: Prefix
             backend:

@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tracc
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/khushal1198/khushal-k8s-manifests  # Update with your GitHub username
+    targetRevision: main
+    path: tracc
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tracc
+
+  syncPolicy:
+    automated:
+      prune: true        # Automatically delete resources that are no longer in Git
+      selfHeal: true     # Automatically sync when changes are detected
+      allowEmpty: false  # Don't sync if the application source is empty
+
+    syncOptions:
+    - CreateNamespace=true  # Create the namespace if it doesn't exist
+    - PrunePropagationPolicy=foreground  # Wait for resources to be deleted
+    - PruneLast=true  # Delete resources after all other resources have been deployed
+
+    retry:
+      limit: 5  # Number of failed sync attempts before giving up
+      backoff:
+        duration: 5s      # Initial backoff duration
+        factor: 2         # Backoff multiplier
+        maxDuration: 3m   # Maximum backoff duration
+
+  # Health assessment for resources
+  revisionHistoryLimit: 10  # Number of previous deployed application revisions to keep
+
+  # Optional: Ignore differences in certain fields
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas  # Ignore replica count differences (useful if HPA is managing replicas)

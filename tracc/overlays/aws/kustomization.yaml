@@ -7,6 +7,11 @@ resources:
   - ingress.yaml
 
 # Patches for AWS environment
+patchesStrategicMerge:
+  - patches/expense-patch.yaml
+  - patches/user-patch.yaml
+  - patches/ui-patch.yaml
+
 patches:
   # Add serviceAccount to all deployments
   - target:
@@ -15,22 +20,6 @@ patches:
       - op: add
         path: /spec/template/spec/serviceAccountName
         value: tracc-app-sa
-
-  # Update resource limits for AWS
-  - target:
-      kind: Deployment
-      name: tracc-expense
-    path: patches/expense-patch.yaml
-
-  - target:
-      kind: Deployment
-      name: tracc-user
-    path: patches/user-patch.yaml
-
-  - target:
-      kind: Deployment
-      name: tracc-ui-server
-    path: patches/ui-patch.yaml
 
 # Update images to latest versions
 images:

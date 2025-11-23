@@ -56,12 +56,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: oauth-credentials
-              key: FACEBOOK_APP_ID
+              key: FACEBOOK_CLIENT_ID
         - name: FACEBOOK_APP_SECRET
           valueFrom:
             secretKeyRef:
               name: oauth-credentials
-              key: FACEBOOK_APP_SECRET
+              key: FACEBOOK_CLIENT_SECRET
         # JWT Secret
         - name: JWT_SECRET
           valueFrom:

@@ -4,6 +4,7 @@ kind: Kustomization
 # Common resources for all environments
 resources:
   - namespace.yaml
+  - serviceaccount.yaml
   - database-configmap.yaml
   - external-secrets.yaml
   - expense-deployment.yaml

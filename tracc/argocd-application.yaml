@@ -9,9 +9,9 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/khushal1198/khushal-k8s-manifests  # Update with your GitHub username
+    repoURL: https://github.com/khushal1198/khushal-k8s-manifests
     targetRevision: main
-    path: tracc
+    path: tracc/overlays/aws  # Use AWS overlay with Kustomize
 
   destination:
     server: https://kubernetes.default.svc

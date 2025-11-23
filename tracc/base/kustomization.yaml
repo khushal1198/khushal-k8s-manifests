@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Common resources for all environments
+resources:
+  - namespace.yaml
+  - database-configmap.yaml
+  - external-secrets.yaml
+  - expense-deployment.yaml
+  - user-deployment.yaml
+  - ui-deployment.yaml
+
+# Common labels applied to all resources
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: kustomize
+      app.kubernetes.io/part-of: tracc
+
+# Namespace for all resources
+namespace: tracc

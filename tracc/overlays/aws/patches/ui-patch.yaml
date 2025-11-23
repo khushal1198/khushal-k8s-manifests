@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracc-ui-server
+spec:
+  template:
+    spec:
+      containers:
+      - name: ui-server
+        env:
+        # Database configuration from ConfigMap
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_NAME
+        - name: DB_SSL_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: DB_SSL_MODE
+        # Database credentials from Secret
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: DB_PASSWORD
+        # OAuth credentials from Secret
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: oauth-credentials
+              key: GOOGLE_CLIENT_ID
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: oauth-credentials
+              key: GOOGLE_CLIENT_SECRET
+        - name: FACEBOOK_APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: oauth-credentials
+              key: FACEBOOK_APP_ID
+        - name: FACEBOOK_APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: oauth-credentials
+              key: FACEBOOK_APP_SECRET
+        # JWT Secret
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: JWT_SECRET
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

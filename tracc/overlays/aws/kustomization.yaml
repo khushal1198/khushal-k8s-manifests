@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference the base configuration and AWS-specific resources
+resources:
+  - ../../base
+  - ingress.yaml
+
+# Patches for AWS environment
+patches:
+  # Add serviceAccount to all deployments
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/serviceAccountName
+        value: tracc-app-sa
+
+  # Update resource limits for AWS
+  - target:
+      kind: Deployment
+      name: tracc-expense
+    path: patches/expense-patch.yaml
+
+  - target:
+      kind: Deployment
+      name: tracc-user
+    path: patches/user-patch.yaml
+
+  - target:
+      kind: Deployment
+      name: tracc-ui-server
+    path: patches/ui-patch.yaml
+
+# Update images to latest versions
+images:
+  - name: ghcr.io/khushal1198/tracc-expense
+    newTag: master-e5b67d5
+  - name: ghcr.io/khushal1198/tracc-user
+    newTag: master-e5b67d5
+  - name: ghcr.io/khushal1198/tracc-ui
+    newTag: master-e5b67d5
+
+# AWS-specific labels
+labels:
+  - pairs:
+      environment: production
+      cloud-provider: aws

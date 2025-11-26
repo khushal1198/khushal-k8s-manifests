@@ -17,6 +17,18 @@ spec:
     spec:
       imagePullSecrets:
       - name: ghcr-secret
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - tracc-ui-server
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: ui-server
         image: ghcr.io/khushal1198/tracc-ui:master-83f87dc

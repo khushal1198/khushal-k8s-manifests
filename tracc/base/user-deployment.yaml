@@ -7,6 +7,11 @@ metadata:
 spec:
   replicas: 2
   revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0        # Don't create extra pods
+      maxUnavailable: 1  # Allow 1 pod to be down during update
   selector:
     matchLabels:
       app: tracc-user

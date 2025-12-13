@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: ui-server
-        image: ghcr.io/khushal1198/tracc-ui:master-abfce98
+        image: ghcr.io/khushal1198/tracc-ui:master-980ec7b
         env:
         # Database configuration from ConfigMap
         - name: DB_HOST

@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: expense-service
-        image: ghcr.io/khushal1198/tracc-expense:master-abfce98
+        image: ghcr.io/khushal1198/tracc-expense:master-980ec7b
         env:
         # Database configuration from ConfigMap
         - name: DB_HOST

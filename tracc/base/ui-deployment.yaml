@@ -36,7 +36,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: ui-server
-        image: ghcr.io/khushal1198/tracc-ui:master-82572a0
+        image: ghcr.io/khushal1198/tracc-ui:master-92ee667
         ports:
         - containerPort: 8081
           name: http

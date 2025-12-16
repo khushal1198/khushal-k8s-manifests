@@ -36,7 +36,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: grpc-user
-        image: ghcr.io/khushal1198/tracc-user:master-82572a0
+        image: ghcr.io/khushal1198/tracc-user:master-92ee667
         ports:
         - containerPort: 50052
           name: grpc

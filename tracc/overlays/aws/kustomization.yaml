@@ -24,11 +24,11 @@ patches:
 # Update images to latest versions
 images:
   - name: ghcr.io/khushal1198/tracc-expense
-    newTag: master-b014756
+    newTag: master-571a625
   - name: ghcr.io/khushal1198/tracc-user
-    newTag: master-b014756
+    newTag: master-571a625
   - name: ghcr.io/khushal1198/tracc-ui
-    newTag: master-b014756
+    newTag: master-571a625
 
 # AWS-specific labels
 labels:

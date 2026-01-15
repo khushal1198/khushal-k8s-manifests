@@ -9,7 +9,7 @@ Kubernetes manifests repository for GitOps deployments to AWS EKS cluster using 
 - **Documentation**: [docs/](./docs/)
   - [Deployment Infrastructure](./docs/DEPLOYMENT_INFRASTRUCTURE.md) - EKS, ALB, Route 53, GitOps
   - [External DNS Setup](./docs/EXTERNAL_DNS.md) - Automatic DNS management
-  - [Shared Namespace Architecture](./docs/SHARED_NAMESPACE.md) - Cost optimization strategy
+  - [ALB Sharing](./docs/ALB_SHARING.md) - Cost optimization via shared ALBs
   - [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Common issues and solutions
 
 ## Repository Structure
@@ -19,7 +19,7 @@ Kubernetes manifests repository for GitOps deployments to AWS EKS cluster using 
 ├── docs/                           # Documentation
 │   ├── DEPLOYMENT_INFRASTRUCTURE.md
 │   ├── EXTERNAL_DNS.md
-│   ├── SHARED_NAMESPACE.md
+│   ├── ALB_SHARING.md
 │   └── TROUBLESHOOTING.md
 ├── shared/                         # Shared namespace configuration
 │   ├── base/
@@ -48,7 +48,7 @@ Kubernetes manifests repository for GitOps deployments to AWS EKS cluster using 
 - **External DNS** - Automatic Route 53 DNS updates
 - **AWS Load Balancer Controller** - Manages ALBs for ingress
 - **External Secrets Operator** - Syncs secrets from AWS Secrets Manager
-- **Cost-Optimized** - Shared namespace architecture saves ~$264/year
+- **Cost-Optimized** - ALB sharing saves ~$192/year per additional app
 
 ## Quick Start
 

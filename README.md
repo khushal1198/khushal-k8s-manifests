@@ -21,9 +21,6 @@ Kubernetes manifests repository for GitOps deployments to AWS EKS cluster using 
 │   ├── EXTERNAL_DNS.md
 │   ├── ALB_SHARING.md
 │   └── TROUBLESHOOTING.md
-├── shared/                         # Shared namespace configuration
-│   ├── base/
-│   └── overlays/aws/
 ├── tracc/                          # Tracc application (expense tracking)
 │   ├── base/
 │   └── overlays/aws/

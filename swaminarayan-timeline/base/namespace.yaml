@@ -1,3 +1,7 @@
-# This namespace is now managed in shared/base/namespace.yaml
-# Using shared namespace: khushal-apps
-# This file is kept for reference but not used in deployment
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: swaminarayan-timeline
+  labels:
+    app: swaminarayan-timeline
+    environment: production

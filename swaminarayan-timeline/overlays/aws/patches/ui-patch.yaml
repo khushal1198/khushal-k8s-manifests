@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swaminarayan-timeline-ui
+  namespace: swaminarayan-timeline
+spec:
+  replicas: 3  # More replicas for production
+  template:
+    spec:
+      containers:
+      - name: ui
+        image: ghcr.io/khushal1198/swaminarayan-timeline-ui:latest
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: ENVIRONMENT
+          value: "production"
+        - name: CDN_URL
+          value: "https://cdn.swaminarayan-timeline.com"  # Update with your CDN
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      nodeSelector:
+        node.kubernetes.io/instance-type: t3.medium
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "app"
+        effect: "NoSchedule"

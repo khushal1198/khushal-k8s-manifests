@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swaminarayan-timeline-contributor
+  namespace: swaminarayan-timeline
+spec:
+  replicas: 3  # More replicas for production
+  template:
+    spec:
+      containers:
+      - name: contributor
+        image: ghcr.io/khushal1198/swaminarayan-timeline-contributor:latest
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: ENVIRONMENT
+          value: "production"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      nodeSelector:
+        node.kubernetes.io/instance-type: t3.medium
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "app"
+        effect: "NoSchedule"

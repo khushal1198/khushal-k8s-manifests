@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: swaminarayan-timeline-config
+  namespace: swaminarayan-timeline
+  labels:
+    app: swaminarayan-timeline
+data:
+  DATABASE_HOST: "postgres.swaminarayan-timeline.svc.cluster.local"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "swaminarayan_timeline"
+  REDIS_HOST: "redis.swaminarayan-timeline.svc.cluster.local"
+  REDIS_PORT: "6379"
+  GRPC_TIMELINE_HOST: "swaminarayan-timeline-timeline"
+  GRPC_TIMELINE_PORT: "50051"
+  GRPC_CONTRIBUTOR_HOST: "swaminarayan-timeline-contributor"
+  GRPC_CONTRIBUTOR_PORT: "50052"

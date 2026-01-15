@@ -1,259 +1,145 @@
 # khushal-k8s-manifests
 
-This repository contains Kubernetes manifests for the tracc service and UI deployed to the cluster.
+Kubernetes manifests repository for GitOps deployments to AWS EKS cluster using ArgoCD.
 
-## Structure
+## Quick Links
+
+- **Production**: [tracc.ai](https://tracc.ai)
+- **ArgoCD**: [argocd.tracc.ai](https://argocd.tracc.ai)
+- **Documentation**: [docs/](./docs/)
+  - [Deployment Infrastructure](./docs/DEPLOYMENT_INFRASTRUCTURE.md) - EKS, ALB, Route 53, GitOps
+  - [External DNS Setup](./docs/EXTERNAL_DNS.md) - Automatic DNS management
+  - [Shared Namespace Architecture](./docs/SHARED_NAMESPACE.md) - Cost optimization strategy
+  - [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) - Common issues and solutions
+
+## Repository Structure
 
 ```
-tracc/
-  expense-deployment.yaml            # Expense service deployment and service
-  user-deployment.yaml              # User service deployment and service  
-  ui-deployment.yaml                # UI deployment and service
-  hello-ui-root-ingress.yaml        # Ingress for UI at /ui endpoint
-  hello-ui-api-ingress.yaml         # Ingress for API at /api endpoint
-  hello-ui-static-ingress.yaml      # Ingress for static files at /static endpoint
+.
+├── docs/                           # Documentation
+│   ├── DEPLOYMENT_INFRASTRUCTURE.md
+│   ├── EXTERNAL_DNS.md
+│   ├── SHARED_NAMESPACE.md
+│   └── TROUBLESHOOTING.md
+├── shared/                         # Shared namespace configuration
+│   ├── base/
+│   └── overlays/aws/
+├── tracc/                          # Tracc application (expense tracking)
+│   ├── base/
+│   └── overlays/aws/
+└── swaminarayan-timeline/          # Timeline application
+    ├── base/
+    └── overlays/aws/
+```
+
+## Infrastructure Overview
+
+### AWS EKS Cluster
+- **Cluster**: tracc-cluster (us-east-1)
+- **Nodes**: 2x t2.medium
+- **Kubernetes**: v1.27+
+
+### Applications
+1. **tracc** - Expense tracking application (tracc.ai)
+2. **swaminarayan-timeline** - Timeline visualization (planned)
+
+### Key Features
+- **GitOps with ArgoCD** - Automatic deployments from Git
+- **External DNS** - Automatic Route 53 DNS updates
+- **AWS Load Balancer Controller** - Manages ALBs for ingress
+- **External Secrets Operator** - Syncs secrets from AWS Secrets Manager
+- **Cost-Optimized** - Shared namespace architecture saves ~$264/year
+
+## Quick Start
+
+### Deploy via ArgoCD
+```bash
+# Create ArgoCD application
+kubectl apply -f argocd-apps/tracc.yaml
+
+# Check sync status
+argocd app get tracc
+argocd app sync tracc
+```
+
+### Deploy via kubectl
+```bash
+# Deploy tracc
+kubectl apply -k tracc/overlays/aws
+
+# Deploy swaminarayan-timeline (when ready)
+kubectl apply -k swaminarayan-timeline/overlays/aws
 ```
 
 ## GitOps Workflow
 
-- This repository is used with ArgoCD for GitOps deployment.
-- The tracc CI/CD pipeline updates the image tags in deployment files when new Docker images are built.
-- ArgoCD watches this repository and automatically syncs changes to the cluster.
+1. **Code Push** → Application repository (e.g., tracc)
+2. **CI/CD** → GitHub Actions builds Docker images
+3. **Update** → Image tags updated in this repository
+4. **Sync** → ArgoCD detects changes and deploys to EKS
+5. **DNS** → External DNS updates Route 53 if ALB changes
 
-## Services
+## Monitoring
 
-### tracc Services
-The tracc application consists of multiple microservices:
-- Runs on port 50051
-- Implements gRPC health checks
-- Is deployed with 3 replicas
-- Uses LoadBalancer service type for external access
-
-### hello-ui Service
-The hello-ui service is a web UI that:
-- Serves a React-based frontend at `/ui`
-- Provides a REST API at `/api/hello` that internally calls the gRPC service
-- Serves static assets (CSS, JS) at `/static`
-- Runs on port 80
-- Is deployed with 1 replica
-- Uses ClusterIP service type
-
-## Access Points
-
-The application services are accessible via the NGINX ingress controller on port 30080:
-
-- **UI**: `http://shivi.local:30080/ui/` - Web interface for the gRPC client
-- **API**: `http://shivi.local:30080/api/hello` - REST API endpoint (POST with JSON body)
-- **Static Files**: `http://shivi.local:30080/static/...` - CSS, JS, and other assets
-
-## API Usage
-
-The `/api/hello` endpoint expects a POST request with JSON body:
-
+### Check Cluster Status
 ```bash
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"name": "Your Name"}' \
-  http://shivi.local:30080/api/hello
+kubectl get nodes
+kubectl get pods -A | grep -v Running
+kubectl top nodes
 ```
 
-Response:
-```json
-{"message": "Hello, Your Name!"}
-```
-
-## Adding New Services
-
-To add a new service to the cluster and expose it via the ingress:
-
-### 1. Deploy Your Service
-
-Create your deployment and service manifests:
-
-```yaml
-# your-service-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: your-service
-  namespace: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: your-service
-  template:
-    metadata:
-      labels:
-        app: your-service
-    spec:
-      containers:
-      - name: your-service
-        image: your-image:tag
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: your-service
-  namespace: default
-spec:
-  selector:
-    app: your-service
-  ports:
-  - port: 80
-    targetPort: 8080
-  type: ClusterIP
-```
-
-### 2. Create an Ingress
-
-Create an ingress to expose your service at a specific path:
-
-```yaml
-# your-service-ingress.yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: your-service-ingress
-  namespace: default
-  annotations:
-    # Add any required annotations for your service
-    # nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: shivi.local
-    http:
-      paths:
-      - path: /your-service
-        pathType: Prefix
-        backend:
-          service:
-            name: your-service
-            port:
-              number: 80
-```
-
-### 3. Common Ingress Patterns
-
-#### Simple Service (no path rewriting)
-```yaml
-- path: /your-service
-  pathType: Prefix
-  backend:
-    service:
-      name: your-service
-      port:
-        number: 80
-```
-
-#### Service with Path Rewriting
-```yaml
-annotations:
-  nginx.ingress.kubernetes.io/rewrite-target: /$2
-# Path: /your-service(/|$)(.*)
-```
-
-#### Service with Custom Headers
-```yaml
-annotations:
-  nginx.ingress.kubernetes.io/configuration-snippet: |
-    proxy_set_header X-Custom-Header "value";
-```
-
-#### Service with Authentication
-```yaml
-annotations:
-  nginx.ingress.kubernetes.io/auth-type: basic
-  nginx.ingress.kubernetes.io/auth-secret: basic-auth
-```
-
-### 4. Apply and Test
-
+### Check Application Status
 ```bash
-# Apply your manifests
-kubectl apply -f your-service-deployment.yaml
-kubectl apply -f your-service-ingress.yaml
+# Via ArgoCD
+argocd app list
+argocd app get tracc
 
-# Test your service
-curl http://shivi.local:30080/your-service/
+# Via kubectl
+kubectl get all -n tracc
+kubectl get all -n khushal-apps
 ```
 
-### 5. Update Documentation
+### View Logs
+```bash
+# Application logs
+kubectl logs -n tracc deployment/tracc-ui --tail=50
 
-Add your new service to the "Access Points" section above:
-
-```markdown
-- **Your Service**: `http://shivi.local:30080/your-service/` - Description of your service
+# System component logs
+kubectl logs -n kube-system deployment/external-dns --tail=50
+kubectl logs -n kube-system deployment/aws-load-balancer-controller --tail=50
 ```
 
-## Ingress Configuration
+## Troubleshooting
 
-The setup uses NGINX ingress controller with the following ingress resources:
+See [Troubleshooting Guide](./docs/TROUBLESHOOTING.md) for common issues and solutions.
 
-### UI Ingress (`hello-ui-root-ingress.yaml`)
-- Routes `/ui` requests to the UI service
-- Uses `nginx.ingress.kubernetes.io/rewrite-target: /static/index.html` to serve the React app
+### Quick Fixes
 
-### API Ingress (`hello-ui-api-ingress.yaml`)
-- Routes `/api` requests to the UI service (which acts as a BFF proxy to gRPC)
-- No rewrite - passes requests directly to the service
-
-### Static Files Ingress (`hello-ui-static-ingress.yaml`)
-- Routes `/static` requests to the UI service
-- Serves CSS, JavaScript, and other static assets
-- No rewrite - serves files directly from the `/static` path
-
-All ingresses use:
-- `ingressClassName: nginx` (modern Kubernetes format)
-- `host: shivi.local` for explicit host matching
-- `pathType: Prefix` for flexible path matching
-
-## ArgoCD Application
-
-To deploy the tracc service, create an ArgoCD Application that points to this repository:
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: tracc
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/khushalpujara/khushal-k8s-manifests'
-    targetRevision: HEAD
-    path: tracc
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+**DNS not resolving?**
+```bash
+kubectl rollout restart deployment/external-dns -n kube-system
 ```
 
-## CI/CD Integration
+**Pods not starting?**
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+kubectl get events -n <namespace> --sort-by='.lastTimestamp'
+```
 
-The tracc application repository automatically updates the image tags in this repository when new code is pushed. The workflow:
+**503 errors from ALB?**
+```bash
+kubectl get endpoints -n <namespace>
+kubectl rollout restart deployment/<deployment> -n <namespace>
+```
 
-1. Builds and pushes new Docker images with commit-specific tags
-2. Updates the image tags in deployment files
-3. Commits and pushes the changes to this repository
-4. ArgoCD detects the changes and deploys the new images
+## Contributing
 
-## Network Access
+1. Create feature branch from `main`
+2. Make changes to manifests
+3. Test with `kubectl diff -k <app>/overlays/aws`
+4. Commit and push changes
+5. ArgoCD will automatically sync (or manually sync if needed)
 
-### Local Development
-- Access via `http://shivi.local:30080/ui/` on the local network
-- Requires mDNS/Avahi for hostname resolution or manual `/etc/hosts` entry
+## License
 
-### Production
-- Configure proper DNS records for the hostname
-- Consider using a LoadBalancer or external ingress for production traffic
-
-## Infrastructure Services
-
-Infrastructure services (ArgoCD, Jenkins, pgAdmin, Grafana, etc.) are managed separately via Ansible and are not part of this application repository. 
+Private repository - All rights reserved 

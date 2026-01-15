@@ -7,7 +7,7 @@ metadata:
     app: swaminarayan-timeline
     service: ui
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: swaminarayan-timeline

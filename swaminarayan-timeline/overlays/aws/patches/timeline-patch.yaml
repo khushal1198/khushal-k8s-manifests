@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
       - name: timeline
-        image: ghcr.io/khushal1198/swaminarayan-timeline-timeline:main-17e565e
+        image: ghcr.io/khushal1198/swaminarayan-timeline-timeline:main-6716577
         env:
         - name: AWS_REGION
           value: "us-east-1"

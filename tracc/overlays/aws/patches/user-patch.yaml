@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: ghcr.io/khushal1198/tracc-user:master-04cdac6
+        image: ghcr.io/khushal1198/tracc-user:master-955954e
         env:
         # Database configuration from ConfigMap
         - name: DB_HOST

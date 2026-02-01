@@ -12,7 +12,7 @@ metadata:
     alb.ingress.kubernetes.io/group.order: "200"
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/e4bfedba-0097-429e-ac36-ee9e36924efa
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/7fbd23ed-724b-4b5e-8138-454666c46909
     external-dns.alpha.kubernetes.io/hostname: swaminarayantimeline.org,www.swaminarayantimeline.org
     alb.ingress.kubernetes.io/healthcheck-path: /health
     alb.ingress.kubernetes.io/healthcheck-interval-seconds: '30'

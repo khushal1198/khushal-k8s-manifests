@@ -7,6 +7,8 @@ spec:
   replicas: 3  # More replicas for production
   template:
     spec:
+      imagePullSecrets:
+      - name: ghcr-secret
       containers:
       - name: contributor
         image: ghcr.io/khushal1198/swaminarayan-timeline-contributor:main-bc70296

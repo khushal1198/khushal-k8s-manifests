@@ -22,11 +22,11 @@ spec:
       - name: ui
         image: ghcr.io/khushal1198/swaminarayan-timeline-ui:main-bc70296
         ports:
-        - containerPort: 8000
+        - containerPort: 5001
           name: http
         env:
         - name: PORT
-          value: "8000"
+          value: "5001"
         - name: SERVICE_NAME
           value: "ui"
         - name: TIMELINE_SERVICE_URL
@@ -47,13 +47,13 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 8000
+            port: 5001
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
-            port: 8000
+            port: 5001
           initialDelaySeconds: 5
           periodSeconds: 5
 ---
@@ -69,7 +69,7 @@ spec:
   type: ClusterIP
   ports:
   - port: 80
-    targetPort: 8000
+    targetPort: 5001
     protocol: TCP
     name: http
   selector:

@@ -6,9 +6,8 @@ namespace: khushal-apps  # Using shared namespace
 bases:
   - ../../base
 
-# Ingress is now managed in shared/overlays/aws/unified-ingress.yaml
-# resources:
-#   - ingress.yaml
+resources:
+  - ingress.yaml
 
 patches:
   - path: patches/timeline-patch.yaml

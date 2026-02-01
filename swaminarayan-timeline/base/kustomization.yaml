@@ -6,6 +6,7 @@ namespace: swaminarayan-timeline  # Using its own namespace
 resources:
   - namespace.yaml  # Each app has its own namespace
   - serviceaccount.yaml
+  - external-secrets.yaml
   - database-configmap.yaml
   - timeline-deployment.yaml
   - contributor-deployment.yaml

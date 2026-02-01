@@ -49,13 +49,13 @@ spec:
             memory: "512Mi"
             cpu: "500m"
         livenessProbe:
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:50052"]
+          grpc:
+            port: 50052
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:50052"]
+          grpc:
+            port: 50052
           initialDelaySeconds: 5
           periodSeconds: 5
 ---

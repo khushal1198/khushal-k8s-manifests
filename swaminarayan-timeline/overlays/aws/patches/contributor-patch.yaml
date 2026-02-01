@@ -4,7 +4,7 @@ metadata:
   name: swaminarayan-timeline-contributor
   namespace: swaminarayan-timeline
 spec:
-  replicas: 3  # More replicas for production
+  replicas: 1  # Reduced for shared cluster resources
   template:
     spec:
       imagePullSecrets:

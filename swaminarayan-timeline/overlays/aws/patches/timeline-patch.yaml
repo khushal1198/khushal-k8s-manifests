@@ -25,7 +25,7 @@ spec:
             memory: "1Gi"
             cpu: "1000m"
       nodeSelector:
-        node.kubernetes.io/instance-type: t2.medium
+        node.kubernetes.io/instance-type: t3.medium
       tolerations:
       - key: "dedicated"
         operator: "Equal"

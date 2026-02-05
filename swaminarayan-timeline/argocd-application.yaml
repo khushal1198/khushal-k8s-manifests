@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: swaminarayan-timeline
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/khushal1198/khushal-k8s-manifests
+    targetRevision: main
+    path: swaminarayan-timeline/overlays/aws
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: swaminarayan-timeline
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

@@ -20,6 +20,20 @@ patches:
       - op: add
         path: /spec/template/spec/serviceAccountName
         value: tracc-app-sa
+  # K3s compatibility - use ClusterSecretStore instead of namespace SecretStore
+  - path: external-secrets-patch.yaml
+  # Remove SecretStore (K3s uses EC2 instance profile via ClusterSecretStore)
+  - target:
+      kind: SecretStore
+      name: aws-secrets-store
+    patch: |-
+      $patch: delete
+  # Remove ServiceAccount (not needed for EC2 instance profile auth)
+  - target:
+      kind: ServiceAccount
+      name: tracc-external-secrets-sa
+    patch: |-
+      $patch: delete
 
 # Update images to latest versions
 images:

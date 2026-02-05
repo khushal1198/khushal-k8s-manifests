@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: tracc-prod  # Override all base namespaces to match ArgoCD destination
+
 # Reference the base configuration and AWS-specific resources
 resources:
   - ../../base

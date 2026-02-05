@@ -7,7 +7,6 @@ namespace: tracc-prod  # Override all base namespaces to match ArgoCD destinatio
 resources:
   - ../../base
   - ingress.yaml
-  - external-secrets-patch.yaml  # K3s-compatible External Secrets using ClusterSecretStore
 
 # Patches for AWS environment
 patchesStrategicMerge:
@@ -23,6 +22,16 @@ patches:
       - op: add
         path: /spec/template/spec/serviceAccountName
         value: tracc-app-sa
+  # Update all ExternalSecrets to use ClusterSecretStore instead of SecretStore
+  - target:
+      kind: ExternalSecret
+    patch: |-
+      - op: replace
+        path: /spec/secretStoreRef/kind
+        value: ClusterSecretStore
+      - op: replace
+        path: /spec/secretStoreRef/name
+        value: aws-secrets-manager
   # Remove SecretStore (K3s uses EC2 instance profile via ClusterSecretStore)
   - target:
       kind: SecretStore

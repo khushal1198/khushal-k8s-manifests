@@ -32,13 +32,21 @@ patches:
       kind: SecretStore
       name: aws-secrets-store
     patch: |-
-      $patch: delete
+      apiVersion: external-secrets.io/v1beta1
+      kind: SecretStore
+      metadata:
+        name: aws-secrets-store
+        $patch: delete
   # Remove ServiceAccount (not needed for EC2 instance profile auth)
   - target:
       kind: ServiceAccount
       name: tracc-external-secrets-sa
     patch: |-
-      $patch: delete
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: tracc-external-secrets-sa
+        $patch: delete
 
 images:
   - name: ghcr.io/khushal1198/swaminarayan-timeline-timeline

@@ -64,7 +64,7 @@ metadata:
     app: swaminarayan-timeline
     service: timeline
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - port: 50051
     targetPort: 50051

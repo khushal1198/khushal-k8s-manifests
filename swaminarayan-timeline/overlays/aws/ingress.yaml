@@ -6,7 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/target-type: instance
     # CRITICAL: Use same group.name as tracc to share ALB and save $16/month
     alb.ingress.kubernetes.io/group.name: tracc-production
     alb.ingress.kubernetes.io/group.order: "200"

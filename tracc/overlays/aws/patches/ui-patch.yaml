@@ -75,3 +75,10 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracc-ui-service
+spec:
+  type: NodePort

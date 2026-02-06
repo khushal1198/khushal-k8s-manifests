@@ -7,7 +7,7 @@ metadata:
     # AWS ALB Annotations
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/target-type: instance
     # IngressGroup - keeps ALB alive even if ingress is deleted/recreated
     alb.ingress.kubernetes.io/group.name: tracc-production
     alb.ingress.kubernetes.io/group.order: '100'

@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: ghcr.io/khushal1198/swaminarayan-timeline-ui:main-5a38d3f
+        image: ghcr.io/khushal1198/swaminarayan-timeline-ui:main-737b425
         ports:
         - containerPort: 5001
           name: http

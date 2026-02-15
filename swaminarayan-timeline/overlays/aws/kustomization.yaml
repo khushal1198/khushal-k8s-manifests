@@ -50,11 +50,11 @@ patches:
 
 images:
   - name: ghcr.io/khushal1198/swaminarayan-timeline-timeline
-    newTag: main-b9e07d0
+    newTag: main-d52110b
   - name: ghcr.io/khushal1198/swaminarayan-timeline-contributor
-    newTag: main-b9e07d0
+    newTag: main-d52110b
   - name: ghcr.io/khushal1198/swaminarayan-timeline-ui
-    newTag: main-b9e07d0
+    newTag: main-d52110b
 
 commonLabels:
   environment: production

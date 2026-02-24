@@ -22,6 +22,8 @@ metadata:
     alb.ingress.kubernetes.io/success-codes: '200'
     alb.ingress.kubernetes.io/healthy-threshold-count: '2'
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+    # AWS WAF rate limiting (pentest protection)
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:883669803269:regional/webacl/tracc-rate-limit/ad82f9f3-422b-400a-99c1-2bfdca83d883
     # Enable CORS for the API
     alb.ingress.kubernetes.io/cors-enabled: 'true'
     alb.ingress.kubernetes.io/cors-allow-origin: '*'

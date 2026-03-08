@@ -36,7 +36,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: grpc-expense
-        image: ghcr.io/khushal1198/tracc-expense:master-11c0d57
+        image: ghcr.io/khushal1198/tracc-expense:master-ff06cc1
         ports:
         - containerPort: 50053
           name: grpc

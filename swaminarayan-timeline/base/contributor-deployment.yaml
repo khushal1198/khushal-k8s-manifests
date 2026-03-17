@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: contributor
-        image: ghcr.io/khushal1198/swaminarayan-timeline-contributor:main-9ae91f5
+        image: ghcr.io/khushal1198/swaminarayan-timeline-contributor:main-d8c53cf
         ports:
         - containerPort: 50052
           name: grpc

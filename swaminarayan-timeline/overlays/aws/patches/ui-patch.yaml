@@ -11,7 +11,7 @@ spec:
       - name: ghcr-secret
       containers:
       - name: ui
-        image: ghcr.io/khushal1198/swaminarayan-timeline-ui:main-c4c818b
+        image: ghcr.io/khushal1198/swaminarayan-timeline-ui:main-29a8d4c
         env:
         - name: AWS_REGION
           value: "us-east-1"

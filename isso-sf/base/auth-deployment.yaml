@@ -37,13 +37,12 @@ spec:
               name: isso-sf-secrets
               key: jwt-secret
               optional: true
-        - name: ISSO_ADMIN_EMAIL
-          value: "admin@issosf.org"
-        - name: ISSO_ADMIN_PASSWORD
+        # JSON array of admin accounts: [{"email","password","name"}, ...]
+        - name: ISSO_ADMINS
           valueFrom:
             secretKeyRef:
               name: isso-sf-secrets
-              key: admin-password
+              key: admins-json
               optional: true
         resources:
           requests:

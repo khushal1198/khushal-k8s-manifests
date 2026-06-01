@@ -36,9 +36,6 @@ configMapGenerator:
       - ENVIRONMENT=production
       - LOG_LEVEL=info
 
-secretGenerator:
-  - name: isso-sf-secrets
-    literals:
-      - jwt-secret=CHANGE-ME-isso-sf-jwt-secret           # TODO: replace via SealedSecret / External Secret
-      - admin-password=CHANGE-ME-admin-password           # TODO: replace before go-live
-      - database-url=                                     # TODO: set when Postgres is provisioned
+# NOTE: the `isso-sf-secrets` Secret (jwt-secret, admins-json, database-url) is
+# materialized by the ExternalSecret in base/external-secrets.yaml from AWS
+# Secrets Manager (isso-sf/app-secrets). No secrets are stored in git.

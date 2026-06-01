@@ -16,10 +16,7 @@ commonLabels:
   app: isso-sf
   managed-by: kustomize
 
-images:
-  - name: ghcr.io/khushal1198/isso_sf-ui
-    newTag: latest
-  - name: ghcr.io/khushal1198/isso_sf-content
-    newTag: latest
-  - name: ghcr.io/khushal1198/isso_sf-auth
-    newTag: latest
+# NOTE: image tags are set directly on the deployment/patch `image:` fields and
+# bumped per-commit by the isso_sf CI. We intentionally do NOT use a kustomize
+# `images:` newTag override here, since that would pin to a fixed tag and stop
+# ArgoCD from rolling pods when CI bumps the SHA tag.

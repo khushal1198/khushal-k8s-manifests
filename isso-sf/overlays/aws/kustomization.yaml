@@ -21,13 +21,8 @@ patches:
       kind: Deployment
       name: isso-sf-auth
 
-images:
-  - name: ghcr.io/khushal1198/isso_sf-ui
-    newTag: latest
-  - name: ghcr.io/khushal1198/isso_sf-content
-    newTag: latest
-  - name: ghcr.io/khushal1198/isso_sf-auth
-    newTag: latest
+# Image tags come from the CI-bumped `image:` fields in the patches; no
+# kustomize images: override (see base/kustomization.yaml note).
 
 labels:
   - pairs:

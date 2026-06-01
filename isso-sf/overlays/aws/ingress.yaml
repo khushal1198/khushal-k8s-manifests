@@ -10,6 +10,8 @@ metadata:
     # Share the same ALB as tracc/timeline (group.name) to save cost
     alb.ingress.kubernetes.io/group.name: tracc-production
     alb.ingress.kubernetes.io/group.order: "300"
+    # Pin to the same subnets as the shared ALB (auto-discovery is unreliable here)
+    alb.ingress.kubernetes.io/subnets: subnet-093dc27e9c19f247d,subnet-0a08ef6d4d1af68db
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     # Reuses the wildcard *.swaminarayantimeline.org ACM certificate

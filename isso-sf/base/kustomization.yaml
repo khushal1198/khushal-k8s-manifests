@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: isso-sf  # Dedicated namespace
+
+resources:
+  - namespace.yaml
+  - serviceaccount.yaml
+  - external-secrets.yaml
+  - config-configmap.yaml
+  - content-deployment.yaml
+  - auth-deployment.yaml
+  - ui-deployment.yaml
+
+commonLabels:
+  app: isso-sf
+  managed-by: kustomize
+
+images:
+  - name: ghcr.io/khushal1198/isso_sf-ui
+    newTag: latest
+  - name: ghcr.io/khushal1198/isso_sf-content
+    newTag: latest
+  - name: ghcr.io/khushal1198/isso_sf-auth
+    newTag: latest

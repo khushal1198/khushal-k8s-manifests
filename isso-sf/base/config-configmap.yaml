@@ -14,4 +14,4 @@ data:
   UI_SERVER_PORT: "8000"
   # Media storage
   ISSO_S3_REGION: "us-east-1"
-  ISSO_S3_BUCKET: ""  # TODO: set the media bucket name
+  ISSO_S3_BUCKET: "isso-sf-media"

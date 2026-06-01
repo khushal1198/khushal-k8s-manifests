@@ -40,6 +40,13 @@ spec:
               name: isso-sf-secrets
               key: jwt-secret
               optional: true
+        # UI server owns content (gallery/events) via the isso_sf DB
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: isso-sf-secrets
+              key: database-url
+              optional: true
         resources:
           requests:
             memory: "256Mi"

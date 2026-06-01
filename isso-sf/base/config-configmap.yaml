@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isso-sf-config
+  namespace: isso-sf
+  labels:
+    app: isso-sf
+data:
+  # gRPC service discovery (in-cluster service names)
+  CONTENT_SERVICE_HOST: "isso-sf-content"
+  CONTENT_SERVICE_PORT: "50051"
+  AUTH_SERVICE_HOST: "isso-sf-auth"
+  AUTH_SERVICE_PORT: "50052"
+  UI_SERVER_PORT: "8000"
+  # Media storage
+  ISSO_S3_REGION: "us-east-1"
+  ISSO_S3_BUCKET: ""  # TODO: set the media bucket name

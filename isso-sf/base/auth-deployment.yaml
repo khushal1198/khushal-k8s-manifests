@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isso-sf-auth
+  namespace: isso-sf
+  labels:
+    app: isso-sf
+    service: auth
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: isso-sf
+      service: auth
+  template:
+    metadata:
+      labels:
+        app: isso-sf
+        service: auth
+    spec:
+      containers:
+      - name: auth
+        image: ghcr.io/khushal1198/isso_sf-auth:latest
+        ports:
+        - containerPort: 50052
+          name: grpc
+        env:
+        - name: SERVICE_NAME
+          value: "auth"
+        - name: AUTH_SERVICE_PORT
+          value: "50052"
+        - name: ISSO_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: isso-sf-secrets
+              key: jwt-secret
+              optional: true
+        - name: ISSO_ADMIN_EMAIL
+          value: "admin@issosf.org"
+        - name: ISSO_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: isso-sf-secrets
+              key: admin-password
+              optional: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: 50052
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 50052
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isso-sf-auth
+  namespace: isso-sf
+  labels:
+    app: isso-sf
+    service: auth
+spec:
+  type: ClusterIP
+  ports:
+  - port: 50052
+    targetPort: 50052
+    protocol: TCP
+    name: grpc
+  selector:
+    app: isso-sf
+    service: auth

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isso-sf-auth
+  namespace: isso-sf
+spec:
+  replicas: 1
+  template:
+    spec:
+      imagePullSecrets:
+      - name: ghcr-secret
+      containers:
+      - name: auth
+        image: ghcr.io/khushal1198/isso_sf-auth:latest
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: ENVIRONMENT
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"

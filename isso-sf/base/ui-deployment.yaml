@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isso-sf-ui
+  namespace: isso-sf
+  labels:
+    app: isso-sf
+    service: ui
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: isso-sf
+      service: ui
+  template:
+    metadata:
+      labels:
+        app: isso-sf
+        service: ui
+    spec:
+      containers:
+      - name: ui
+        image: ghcr.io/khushal1198/isso_sf-ui:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        envFrom:
+        - configMapRef:
+            name: isso-sf-config
+        env:
+        - name: SERVICE_NAME
+          value: "ui"
+        - name: APP_ENV
+          value: "PROD"
+        - name: ISSO_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: isso-sf-secrets
+              key: jwt-secret
+              optional: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isso-sf-ui
+  namespace: isso-sf
+  labels:
+    app: isso-sf
+    service: ui
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: isso-sf
+    service: ui

@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: auth
-        image: ghcr.io/khushal1198/isso_sf-auth:main-fcc8e21
+        image: ghcr.io/khushal1198/isso_sf-auth:main-e3ab7c1
         ports:
         - containerPort: 50052
           name: grpc

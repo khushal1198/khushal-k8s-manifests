@@ -19,6 +19,9 @@ spec:
       labels:
         app: isso-sf
         service: ui
+      annotations:
+        # Bump to force a pod restart when non-image config (configmap env) changes.
+        isso-sf/config-rev: "2026-09-13-email-issosf"
     spec:
       containers:
       - name: ui

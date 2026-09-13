@@ -15,3 +15,9 @@ data:
   # Media storage
   ISSO_S3_REGION: "us-east-1"
   ISSO_S3_BUCKET: "isso-sf-media"
+  # Public site base URL (used in email links: unsubscribe, RSVP, etc.)
+  ISSO_SITE_BASE_URL: "https://issosf.org"
+  # Email senders — SES-verified issosf.org (DKIM+MAIL FROM+DMARC configured)
+  NEWSLETTER_FROM: "newsletter@issosf.org"
+  NEWSLETTER_FROM_NAME: "ISSO San Francisco"
+  RSVP_EMAIL_FROM: "rsvp@issosf.org"

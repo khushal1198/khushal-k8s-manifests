@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: ghcr.io/khushal1198/isso_sf-ui:main-0ba52f3
+        image: ghcr.io/khushal1198/isso_sf-ui:main-3973a93
         ports:
         - containerPort: 8000
           name: http

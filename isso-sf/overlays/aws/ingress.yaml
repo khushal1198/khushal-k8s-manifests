@@ -14,8 +14,9 @@ metadata:
     alb.ingress.kubernetes.io/subnets: subnet-093dc27e9c19f247d,subnet-0a08ef6d4d1af68db
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'
-    # Reuses the wildcard *.swaminarayantimeline.org ACM certificate
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/7fbd23ed-724b-4b5e-8138-454666c46909
+    # Wildcard *.swaminarayantimeline.org cert (for isso.swaminarayantimeline.org)
+    # + the issosf.org/www.issosf.org cert (SNI: the ALB serves the right one per host)
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/7fbd23ed-724b-4b5e-8138-454666c46909,arn:aws:acm:us-east-1:883669803269:certificate/5a7e366d-166f-4512-82f1-08427f428764
     external-dns.alpha.kubernetes.io/hostname: isso.swaminarayantimeline.org
     alb.ingress.kubernetes.io/healthcheck-path: /health
     alb.ingress.kubernetes.io/healthcheck-interval-seconds: '30'
@@ -34,6 +35,27 @@ spec:
   # The UI server is the single entry point: it serves the SPA and proxies
   # /api/* to the Content and Auth gRPC services in-cluster.
   - host: isso.swaminarayantimeline.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: isso-sf-ui
+            port:
+              number: 80
+  # New primary domain (issosf.org) — same UI backend.
+  - host: issosf.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: isso-sf-ui
+            port:
+              number: 80
+  - host: www.issosf.org
     http:
       paths:
       - path: /

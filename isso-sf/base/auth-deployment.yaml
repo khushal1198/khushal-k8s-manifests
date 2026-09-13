@@ -38,11 +38,20 @@ spec:
               key: jwt-secret
               optional: true
         # JSON array of admin accounts: [{"email","password","name"}, ...]
+        # NOTE: now a one-time BOOTSTRAP seed — the admin_users Postgres table
+        # (via DATABASE_URL below) is the source of truth once populated.
         - name: ISSO_ADMINS
           valueFrom:
             secretKeyRef:
               name: isso-sf-secrets
               key: admins-json
+              optional: true
+        # Auth reads/seeds the admin_users table in the shared isso_sf DB.
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: isso-sf-secrets
+              key: database-url
               optional: true
         resources:
           requests:

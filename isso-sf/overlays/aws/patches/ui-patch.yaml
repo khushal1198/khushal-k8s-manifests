@@ -11,7 +11,7 @@ spec:
       - name: ghcr-secret
       containers:
       - name: ui
-        image: ghcr.io/khushal1198/isso_sf-ui:main-3ac0eea
+        image: ghcr.io/khushal1198/isso_sf-ui:main-218457b
         env:
         - name: AWS_REGION
           value: "us-east-1"

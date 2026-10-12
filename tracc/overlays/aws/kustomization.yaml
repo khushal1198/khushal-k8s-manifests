@@ -56,11 +56,11 @@ patches:
 # Update images to latest versions
 images:
   - name: ghcr.io/khushal1198/tracc-expense
-    newTag: master-140084d2899f5fe28eefab9b9a340651b9772e6b
+    newTag: master-6ffe8539d1892416fcb40f48de445ae55515cbdc
   - name: ghcr.io/khushal1198/tracc-user
-    newTag: master-140084d2899f5fe28eefab9b9a340651b9772e6b
+    newTag: master-6ffe8539d1892416fcb40f48de445ae55515cbdc
   - name: ghcr.io/khushal1198/tracc-ui
-    newTag: master-140084d2899f5fe28eefab9b9a340651b9772e6b
+    newTag: master-6ffe8539d1892416fcb40f48de445ae55515cbdc
 
 # AWS-specific labels
 labels:

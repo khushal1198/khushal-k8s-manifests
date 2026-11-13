@@ -17,6 +17,17 @@ spec:
           value: "us-east-1"
         - name: ENVIRONMENT
           value: "production"
+        - name: ISSO_STREAMING_AGENT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: isso-sf-secrets
+              key: streaming-agent-token
+        - name: ISSO_STREAMING_CONTROLS_ENABLED
+          value: "false"
+        - name: ISSO_STREAMING_OPERATORS
+          value: "khushal@issosf.org"
+        - name: ISSO_STREAMING_DESKTOP_OPERATORS
+          value: ""
         resources:
           requests:
             memory: "256Mi"

@@ -31,7 +31,7 @@ spec:
         - name: ISSO_STREAMING_DESKTOP_URL
           value: "https://desktop.issosf.org/"
         - name: ISSO_STREAMING_DESKTOP_NODE_ID
-          value: "gH1F$KiszKPUtKO5E9cnx7Hlz8V4wG9S1ckdtvG7Zu1S6aHySCym7Uj0LQ@$STt"
+          value: "gH1F$$$$KiszKPUtKO5E9cnx7Hlz8V4wG9S1ckdtvG7Zu1S6aHySCym7Uj0LQ@$$STt"
         - name: ISSO_STREAMING_DESKTOP_EMBED
           value: "true"
         resources:

@@ -39,7 +39,13 @@ for (const step of ['create', 'admin']) {
   const accepted = /(^|\n)Done\./.test(result.stdout || '') ||
     (step === 'create' && /User already exists\./.test(result.stdout || ''));
   if (result.error || result.status !== 0 || !accepted) {
-    // Do not forward unreviewed CLI output, which may include private config.
+    // Emit only diagnostic lines and redact credentials before logging.
+    const diagnostics = `${result.stdout || ''}\n${result.stderr || ''}`
+      .replaceAll(process.env.MESH_OWNER_PASSWORD, '[redacted]')
+      .replaceAll(sessionKey, '[redacted]')
+      .split('\n').filter(line => /error|unknown|invalid|cannot|missing|not found|warning/i.test(line))
+      .join('\n').slice(-2000);
+    console.error(`Bootstrap status=${result.status}, signal=${result.signal}; ${diagnostics}`);
     throw Error(`Gateway ${step} step failed; no public server started`);
   }
   console.log(`Gateway owner ${step} step complete.`);

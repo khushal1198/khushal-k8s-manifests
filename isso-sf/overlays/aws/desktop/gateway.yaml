@@ -121,4 +121,6 @@ spec:
   selector:
     app: mandir-desktop
   ports:
-    - {name: http, port: 80, targetPort: http}
+    # The existing k3s nodes have no providerID; target registration is explicit.
+    # Preserve this port to keep the registered AWS targets stable on recreation.
+    - {name: http, port: 80, targetPort: http, nodePort: 31002}

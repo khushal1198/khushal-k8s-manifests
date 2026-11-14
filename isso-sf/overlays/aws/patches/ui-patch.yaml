@@ -25,7 +25,7 @@ spec:
         - name: ISSO_STREAMING_CONTROLS_ENABLED
           value: "true"
         - name: ISSO_STREAMING_OPERATORS
-          value: "khushal@issosf.org"
+          value: "khushal@issosf.org,diya@issosf.org"
         - name: ISSO_STREAMING_DESKTOP_OPERATORS
           value: "khushal@issosf.org"
         - name: ISSO_STREAMING_DESKTOP_URL

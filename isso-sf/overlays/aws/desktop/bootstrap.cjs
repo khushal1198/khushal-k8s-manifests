@@ -1,7 +1,7 @@
 // Runs only in the init container, before the database's web server starts.
 // Credentials stay in Kubernetes Secret environment variables, never OS argv.
 const fs = require('node:fs');
-const { spawnSync } = require('node:child_process');
+const { spawn } = require('node:child_process');
 const data = '/opt/meshcentral/meshcentral-data';
 const entry = '/opt/meshcentral/meshcentral/meshcentral.js';
 const marker = `${data}/.isso-owner-bootstrapped`;
@@ -31,11 +31,33 @@ const child = `
   } else { process.argv.push('--adminaccount', email); }
   require(${JSON.stringify(entry)}).mainStart();
 `;
-for (const step of ['create', 'admin']) {
-  const result = spawnSync(process.execPath, ['-e', child], {
-    env: { ...process.env, MESH_BOOTSTRAP_STEP: step },
-    encoding: 'utf8', timeout: 180000, maxBuffer: 1024 * 1024
+function runStep(step) {
+  return new Promise((resolve, reject) => {
+    // MeshCentral's --launch mode exits when its parent closes stdin. Keep this
+    // pipe open until the CLI finishes its DB operation; spawnSync closes it early.
+    const proc = spawn(process.execPath, ['-e', child], {
+      env: { ...process.env, MESH_BOOTSTRAP_STEP: step },
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+    let stdout = '', stderr = '';
+    const timer = setTimeout(() => proc.kill('SIGKILL'), 180000);
+    const collect = (chunk, isError) => {
+      if (isError) stderr += chunk; else stdout += chunk;
+      if (stdout.length + stderr.length > 1024 * 1024) proc.kill('SIGKILL');
+    };
+    proc.stdout.on('data', chunk => collect(chunk, false));
+    proc.stderr.on('data', chunk => collect(chunk, true));
+    proc.stdin.on('error', () => {});
+    proc.on('error', error => { clearTimeout(timer); reject(error); });
+    proc.on('close', (status, signal) => {
+      clearTimeout(timer);
+      resolve({stdout, stderr, status, signal});
+    });
   });
+}
+async function bootstrap() {
+for (const step of ['create', 'admin']) {
+  const result = await runStep(step);
   const accepted = /(^|\n)Done\./.test(result.stdout || '') ||
     (step === 'create' && /User already exists\./.test(result.stdout || ''));
   if (result.error || result.status !== 0 || !accepted) {
@@ -50,3 +72,5 @@ for (const step of ['create', 'admin']) {
   console.log(`Gateway owner ${step} step complete.`);
 }
 fs.writeFileSync(marker, 'Bootstrapped; do not delete or reset the database.\n', { mode: 0o600 });
+}
+bootstrap().catch(error => { console.error(error.message); process.exitCode = 1; });

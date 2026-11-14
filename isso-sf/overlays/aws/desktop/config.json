@@ -12,6 +12,7 @@
     "agentPing": 20,
     "browserPing": 20,
     "allowFraming": false,
+    "allowedFramingOrigins": ["https://issosf.org", "https://www.issosf.org"],
     "allowLoginToken": false,
     "lockAgentDownload": true,
     "selfUpdate": false,

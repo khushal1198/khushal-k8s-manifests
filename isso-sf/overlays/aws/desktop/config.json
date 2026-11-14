@@ -1,0 +1,33 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Ylianst/MeshCentral/1.3.1/meshcentral-config-schema.json",
+  "settings": {
+    "cert": "desktop.issosf.org",
+    "port": 4430,
+    "aliasPort": 443,
+    "redirPort": 0,
+    "mpsPort": 0,
+    "WANonly": true,
+    "exactPorts": true,
+    "tlsOffload": true,
+    "agentPing": 20,
+    "browserPing": 20,
+    "allowFraming": false,
+    "allowLoginToken": false,
+    "lockAgentDownload": true,
+    "selfUpdate": false,
+    "plugins": { "enabled": false }
+  },
+  "domains": {
+    "": {
+      "title": "Mandir OBS Desktop",
+      "newAccounts": false,
+      "userNameIsEmail": true,
+      "certUrl": "https://desktop.issosf.org/",
+      "passwordRequirements": {
+        "min": 16,
+        "loginTokens": false,
+        "allowaccountreset": false
+      }
+    }
+  }
+}

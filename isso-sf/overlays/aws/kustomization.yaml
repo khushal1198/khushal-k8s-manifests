@@ -6,6 +6,7 @@ namespace: isso-sf  # Dedicated namespace
 resources:
   - ../../base
   - ingress.yaml
+  - desktop
 
 patches:
   - path: patches/ui-patch.yaml

@@ -1,0 +1,124 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mandir-desktop
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secrets-manager
+    kind: ClusterSecretStore
+  target:
+    name: mandir-desktop
+    creationPolicy: Owner
+  data:
+    - secretKey: owner-password
+      remoteRef:
+        key: isso-sf/app-secrets
+        property: desktop-owner-password
+    - secretKey: session-key
+      remoteRef:
+        key: isso-sf/app-secrets
+        property: desktop-session-key
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mandir-desktop
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mandir-desktop
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mandir-desktop
+  template:
+    metadata:
+      labels:
+        app: mandir-desktop
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      initContainers:
+        - name: bootstrap
+          image: ghcr.io/ylianst/meshcentral:1.3.1
+          command: [node, /config/bootstrap.cjs]
+          env:
+            - name: MESH_OWNER_EMAIL
+              value: khushal@issosf.org
+            - name: MESH_OWNER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mandir-desktop
+                  key: owner-password
+            - name: MESH_SESSION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mandir-desktop
+                  key: session-key
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: '1', memory: 768Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: state, mountPath: /opt/meshcentral/meshcentral-data, subPath: data}
+            - {name: config, mountPath: /config, readOnly: true}
+      containers:
+        - name: meshcentral
+          image: ghcr.io/ylianst/meshcentral:1.3.1
+          command: [node, /opt/meshcentral/meshcentral/meshcentral.js]
+          args: [--datapath, /opt/meshcentral/meshcentral-data]
+          ports:
+            - {name: http, containerPort: 4430}
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {cpu: '1', memory: 768Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          startupProbe:
+            tcpSocket: {port: http}
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: {port: http}
+            periodSeconds: 30
+            failureThreshold: 5
+          volumeMounts:
+            - {name: state, mountPath: /opt/meshcentral/meshcentral-data, subPath: data}
+            - {name: state, mountPath: /opt/meshcentral/meshcentral-files, subPath: files}
+            - {name: state, mountPath: /opt/meshcentral/meshcentral-backups, subPath: backups}
+      volumes:
+        - name: state
+          persistentVolumeClaim: {claimName: mandir-desktop}
+        - name: config
+          configMap: {name: mandir-desktop-config}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mandir-desktop
+spec:
+  # Private node ports are reached by the existing ALB; no public Windows ports.
+  type: NodePort
+  selector:
+    app: mandir-desktop
+  ports:
+    - {name: http, port: 80, targetPort: http}

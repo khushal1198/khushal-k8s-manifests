@@ -43,8 +43,7 @@ for (const step of ['create', 'admin']) {
     const diagnostics = `${result.stdout || ''}\n${result.stderr || ''}`
       .replaceAll(process.env.MESH_OWNER_PASSWORD, '[redacted]')
       .replaceAll(sessionKey, '[redacted]')
-      .split('\n').filter(line => /error|unknown|invalid|cannot|missing|not found|warning/i.test(line))
-      .join('\n').slice(-2000);
+      .slice(-2000);
     console.error(`Bootstrap status=${result.status}, signal=${result.signal}; ${diagnostics}`);
     throw Error(`Gateway ${step} step failed; no public server started`);
   }

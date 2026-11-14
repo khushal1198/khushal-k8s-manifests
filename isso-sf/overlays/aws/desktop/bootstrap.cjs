@@ -20,7 +20,10 @@ if (!process.env.MESH_OWNER_EMAIL || !process.env.MESH_OWNER_PASSWORD ||
     process.env.MESH_OWNER_PASSWORD.length < 24) throw Error('Bootstrap secret missing');
 const child = `
   process.argv = [process.execPath, ${JSON.stringify(entry)},
-    '--datapath', ${JSON.stringify(data)}];
+    '--datapath', ${JSON.stringify(data)}, '--launch', '1'];
+  // Calling mainStart from node -e must bypass its process supervisor. Otherwise
+  // the inherited -e execArgv would run this wrapper again in every child.
+  process.execArgv = [];
   const email = process.env.MESH_OWNER_EMAIL;
   if (process.env.MESH_BOOTSTRAP_STEP === 'create') {
     process.argv.push('--createaccount', email, '--pass', process.env.MESH_OWNER_PASSWORD,

@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: isso-sf
 resources:
   - gateway.yaml
+  - ingress.yaml
 configMapGenerator:
   - name: mandir-desktop-config
     files:

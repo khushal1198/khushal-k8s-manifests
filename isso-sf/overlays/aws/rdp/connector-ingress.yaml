@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mandir-rdp-connector
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/group.name: tracc-production
+    alb.ingress.kubernetes.io/group.order: '305'
+    alb.ingress.kubernetes.io/subnets: subnet-093dc27e9c19f247d,subnet-0a08ef6d4d1af68db
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/9e6cf4d4-3e65-46f7-b26f-7d43eb2fffd4
+    alb.ingress.kubernetes.io/healthcheck-path: /rdp-connector
+    alb.ingress.kubernetes.io/success-codes: 200-499
+    alb.ingress.kubernetes.io/tags: Environment=production
+spec:
+  rules:
+    - host: desktop.issosf.org
+      http:
+        paths:
+          - path: /rdp-connector
+            pathType: Prefix
+            backend:
+              service:
+                name: mandir-rdpgw
+                port: {number: 8081}

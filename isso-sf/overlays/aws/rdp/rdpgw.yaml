@@ -1,0 +1,12 @@
+Server:
+  Authentication: [local, ntlm]
+  AuthSocket: /run/rdpgw/auth.sock
+  Port: 9443
+  GatewayAddress: https://rdp.issosf.org
+  CertFile: /tls/tls.crt
+  KeyFile: /tls/tls.key
+  Hosts: ["ISSOSanJose:3389", "issosanjose:3389"]
+  HostSelection: roundrobin
+Caps:
+  TokenAuth: false
+  DisableRedirect: true

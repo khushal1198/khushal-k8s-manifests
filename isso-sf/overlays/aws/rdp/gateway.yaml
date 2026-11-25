@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mandir-rdpgw
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: mandir-rdpgw}
+  template:
+    metadata:
+      labels: {app: mandir-rdpgw}
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector: {node-role: worker}
+      securityContext:
+        fsGroup: 1001
+        seccompProfile: {type: RuntimeDefault}
+      imagePullSecrets: [{name: ghcr-secret}]
+      hostAliases:
+        - ip: 127.0.0.1
+          hostnames: [ISSOSanJose, issosanjose]
+      containers:
+        - name: gateway
+          image: bolkedebruin/rdpgw@sha256:b29d56fc0c678c682d1079f57c14ed32b47df52c1ea51dbd8ee885c6464e7452
+          command: [/opt/rdpgw/rdpgw, -c, /config/rdpgw.yaml]
+          securityContext: &restricted
+            runAsUser: 1001
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          env:
+            - name: RDPGW_SERVER__SESSION_KEY
+              valueFrom: {secretKeyRef: {name: mandir-rdpgw-settings, key: session}}
+            - name: RDPGW_SERVER__SESSION_ENCRYPTION_KEY
+              valueFrom: {secretKeyRef: {name: mandir-rdpgw-settings, key: encryption}}
+          ports: [{name: rdg, containerPort: 9443}]
+          readinessProbe: {tcpSocket: {port: rdg}, periodSeconds: 5}
+          resources: {requests: {cpu: 50m, memory: 48Mi}, limits: {cpu: 350m, memory: 192Mi}}
+          volumeMounts:
+            - {name: config, mountPath: /config, readOnly: true}
+            - {name: tls, mountPath: /tls, readOnly: true}
+            - {name: socket, mountPath: /run/rdpgw, readOnly: true}
+        - name: auth
+          image: ghcr.io/khushal1198/mandir-rdpgw-auth:42243209fa550b5659da35fd6611a8d0769cad3c
+          securityContext: *restricted
+          env:
+            - name: ISSO_RDP_KEY
+              valueFrom: {secretKeyRef: {name: mandir-rdpgw-settings, key: owner-key}}
+          resources: {requests: {cpu: 25m, memory: 32Mi}, limits: {cpu: 150m, memory: 96Mi}}
+          volumeMounts: [{name: socket, mountPath: /run/rdpgw}]
+        - name: connector
+          image: jpillora/chisel@sha256:16019b2c49acfd6f69b369d7d5661aa4d53c896baee330ec6d47e135d36fc0df
+          args: [server, --port, "8081", --reverse, --authfile, /pairing/users.json]
+          securityContext: *restricted
+          ports: [{name: connector, containerPort: 8081}]
+          readinessProbe: {tcpSocket: {port: connector}, periodSeconds: 5}
+          resources: {requests: {cpu: 25m, memory: 48Mi}, limits: {cpu: 250m, memory: 128Mi}}
+          volumeMounts: [{name: pairing, mountPath: /pairing, readOnly: true}]
+      volumes:
+        - {name: tls, secret: {secretName: mandir-rdpgw-tls, defaultMode: 0440}}
+        - {name: config, configMap: {name: mandir-rdpgw-config}}
+        - {name: socket, emptyDir: {medium: Memory, sizeLimit: 1Mi}}
+        - name: pairing
+          secret:
+            secretName: mandir-rdpgw-settings
+            defaultMode: 0440
+            items: [{key: users.json, path: users.json}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mandir-rdpgw
+spec:
+  type: NodePort
+  selector: {app: mandir-rdpgw}
+  ports:
+    - {name: rdg, port: 443, targetPort: rdg, nodePort: 31389}
+    - {name: connector, port: 8081, targetPort: connector, nodePort: 31390}

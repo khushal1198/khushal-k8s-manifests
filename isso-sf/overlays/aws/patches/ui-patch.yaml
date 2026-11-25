@@ -17,6 +17,11 @@ spec:
           value: "us-east-1"
         - name: ENVIRONMENT
           value: "production"
+        - name: ISSO_RDP_KEY
+          valueFrom:
+            secretKeyRef: {name: mandir-rdpgw-settings, key: owner-key}
+        - name: ISSO_RDP_ENABLED
+          value: "true"
         - name: ISSO_STREAMING_AGENT_TOKEN
           valueFrom:
             secretKeyRef:

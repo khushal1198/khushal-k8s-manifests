@@ -36,7 +36,7 @@ spec:
             - name: RDPGW_SERVER__SESSION_ENCRYPTION_KEY
               valueFrom: {secretKeyRef: {name: mandir-rdpgw-settings, key: encryption}}
           ports: [{name: rdg, containerPort: 9443}]
-          readinessProbe: {tcpSocket: {port: rdg}, periodSeconds: 5}
+          readinessProbe: {httpGet: {scheme: HTTPS, port: rdg, path: /metrics}, periodSeconds: 30}
           resources: {requests: {cpu: 50m, memory: 48Mi}, limits: {cpu: 350m, memory: 192Mi}}
           volumeMounts:
             - {name: config, mountPath: /config, readOnly: true}

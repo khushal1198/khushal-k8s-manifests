@@ -12,8 +12,8 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:883669803269:certificate/9e6cf4d4-3e65-46f7-b26f-7d43eb2fffd4
-    alb.ingress.kubernetes.io/healthcheck-path: /rdp-connector
-    alb.ingress.kubernetes.io/success-codes: 200-499
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/success-codes: "200"
     alb.ingress.kubernetes.io/tags: Environment=production
 spec:
   rules:

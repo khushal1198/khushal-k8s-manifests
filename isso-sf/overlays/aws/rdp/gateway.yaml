@@ -19,7 +19,7 @@ spec:
       imagePullSecrets: [{name: ghcr-secret}]
       hostAliases:
         - ip: 127.0.0.1
-          hostnames: [ISSOSanJose, issosanjose]
+          hostnames: [issosanjose]
       containers:
         - name: gateway
           image: bolkedebruin/rdpgw@sha256:b29d56fc0c678c682d1079f57c14ed32b47df52c1ea51dbd8ee885c6464e7452

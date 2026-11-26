@@ -50,23 +50,25 @@ spec:
               valueFrom: {secretKeyRef: {name: mandir-rdpgw-settings, key: owner-key}}
           resources: {requests: {cpu: 25m, memory: 32Mi}, limits: {cpu: 150m, memory: 96Mi}}
           volumeMounts: [{name: socket, mountPath: /run/rdpgw}]
-        - name: connector
-          image: jpillora/chisel@sha256:16019b2c49acfd6f69b369d7d5661aa4d53c896baee330ec6d47e135d36fc0df
-          args: [server, --port, "8081", --reverse, --authfile, /pairing/users.json]
+        - name: mesh-relay
+          image: python:3.12-slim-bookworm
+          command: [python3, /config/mesh-relay.py]
+          env:
+            - {name: MANDIR_NODE, value: "gH1F$$$$KiszKPUtKO5E9cnx7Hlz8V4wG9S1ckdtvG7Zu1S6aHySCym7Uj0LQ@$$STt"}
           securityContext: *restricted
-          ports: [{name: connector, containerPort: 8081}]
-          readinessProbe: {tcpSocket: {port: connector}, periodSeconds: 5}
-          resources: {requests: {cpu: 25m, memory: 48Mi}, limits: {cpu: 250m, memory: 128Mi}}
-          volumeMounts: [{name: pairing, mountPath: /pairing, readOnly: true}]
+          resources: {requests: {cpu: 25m, memory: 40Mi}, limits: {cpu: 250m, memory: 112Mi}}
+          volumeMounts:
+            - {name: config, mountPath: /config, readOnly: true}
+            - {name: relay-login, mountPath: /run/credential, readOnly: true}
+            - {name: relay-runtime, mountPath: /run/relay}
       volumes:
         - {name: tls, secret: {secretName: mandir-rdpgw-tls, defaultMode: 0440}}
         - {name: config, configMap: {name: mandir-rdpgw-config}}
         - {name: socket, emptyDir: {medium: Memory, sizeLimit: 1Mi}}
-        - name: pairing
-          secret:
-            secretName: mandir-rdpgw-settings
-            defaultMode: 0440
-            items: [{key: users.json, path: users.json}]
+        - name: relay-runtime
+          emptyDir: {medium: Memory, sizeLimit: 24Mi}
+        - name: relay-login
+          secret: {secretName: mandir-rdp-mesh-login, defaultMode: 0440}
 ---
 apiVersion: v1
 kind: Service
@@ -77,4 +79,14 @@ spec:
   selector: {app: mandir-rdpgw}
   ports:
     - {name: rdg, port: 443, targetPort: rdg, nodePort: 31389}
-    - {name: connector, port: 8081, targetPort: connector, nodePort: 31390}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mandir-rdpgw-ingress
+spec:
+  podSelector:
+    matchLabels: {app: mandir-rdpgw}
+  policyTypes: [Ingress]
+  ingress:
+    - ports: [{port: 9443, protocol: TCP}]
